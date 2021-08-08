@@ -15,6 +15,6 @@ mybatis:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
-  port: 12321
+  port: 7777
   servlet:
     context-path: /koe
