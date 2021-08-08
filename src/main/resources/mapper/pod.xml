@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koe.dao.PodMapper">
+    <resultMap id="BaseResultMap" type="com.koe.model.PodBase">
+        <result column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="namespace" jdbcType="VARCHAR" property="namespace" />
+        <result column="cluster_name" jdbcType="VARCHAR" property="clusterName" />
+        <result column="node_ip" jdbcType="VARCHAR" property="nodeIp" />
+        <result column="app_name" jdbcType="VARCHAR" property="appName" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="creation_time" jdbcType="BIGINT" property="creationTime" />
+    </resultMap>
+    <sql id="base">
+        select * from pod_base
+        <where>
+            1=1
+            <if test="pod.name != null and pod.name.size()>0">
+                and
+                <foreach item="item" collection="pod.name" separator="or" open="(" close=")">
+                    name like '%${item}%'
+                </foreach>
+            </if>
+            <if test="pod.clusterName != null and pod.clusterName.size()>0">
+                and
+                <foreach item="item" collection="pod.clusterName" separator="or" open="(" close=")">
+                    cluster_name like '%${item}%'
+                </foreach>
+            </if>
+            <if test="pod.namespace != null and pod.namespace.size()>0">
+                and
+                <foreach item="item" collection="pod.namespace" separator="or" open="(" close=")">
+                    namespace like '%${item}%'
+                </foreach>
+            </if>
+
+            <if test="pod.status != null and pod.status.size()>0">
+                and
+                <foreach item="item" collection="pod.status" separator="or" open="(" close=")">
+                    status like '%${item}%'
+                </foreach>
+            </if>
+        </where>
+    </sql>
+    <select id="selectBase" resultMap="BaseResultMap">
+        <include refid="base"></include>
+    </select>
+
+    <select id="selectCnt" resultType="java.lang.Integer">
+        select count(*) from(
+        <include refid="base"></include>) tmp
+    </select>
+    <select id="selectNs" resultType="java.lang.String">
+        select distinct namespace from(
+        <include refid="base"></include>) tmp
+    </select>
+
+</mapper>
