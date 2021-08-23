@@ -1,9 +1,11 @@
 package com.koe.service;
 
+import com.koe.config.RedisConfig;
 import com.koe.dao.PodMapper;
 import com.koe.model.PodBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,12 +32,15 @@ public class PodService {
         logger.error("test");
         logger.warn("test");
     }
+
+    @Cacheable(value = RedisConfig.REDIS_KEY_DATABASE, key = "'pms:brand:'+#id", unless = "#result==null")
     public List<PodBase> getPods(Map<String,Object> req){
         return podMapper.selectBase(req);
     }
 
     public Integer getPodCounts(Map<String,Object> req){
 
+        System.out.println(req);
         return podMapper.selectCnt(req);
     }
 
